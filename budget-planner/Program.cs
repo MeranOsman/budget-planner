@@ -160,19 +160,66 @@ class Program
         static void AddDescription(BudgetItem item)
         {
             Console.WriteLine();
-            Console.WriteLine($"Bitte geben Sie eine Beschreibung für {item.Category} ein (max. 10 Zeichen):");
+            Console.WriteLine($"Bitte geben Sie eine Beschreibung für {item.Category} ein (3-10 Zeichen):");
             Console.WriteLine();
             string description = Console.ReadLine();
 
-            while (description.Length > 10)
+            while (description.Length < 3 || description.Length > 10)
             {
-                Console.WriteLine("Beschreibung zu lang. Bitte geben Sie eine Beschreibung mit maximal 10 Zeichen ein:");
+                if (description.Length < 3)
+                {
+                    Console.WriteLine("Beschreibung zu kurz. Bitte geben Sie eine Beschreibung mit mindestens 3 Zeichen ein:");
+                }
+                else
+                {
+                    Console.WriteLine("Beschreibung zu lang. Bitte geben Sie eine Beschreibung mit maximal 10 Zeichen ein:");
+                }
                 description = Console.ReadLine();
             }
 
             item.Description = description;
             Console.WriteLine();
-            Console.WriteLine($"{item.Type} für {item.Category} mit Beschreibung '{item.Description}' erfasst.");
+            AddAmount(item);
+        }
+
+
+        static void AddAmount(BudgetItem item)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Bitte geben Sie den Betrag für {item.Type} ein:");
+            Console.WriteLine();
+            string amountInput = Console.ReadLine();
+            decimal amount;
+
+            while (!decimal.TryParse(amountInput, out amount))
+            {
+                Console.WriteLine("Ungültiger Betrag. Bitte geben Sie eine gültige Zahl ein:");
+                amountInput = Console.ReadLine();
+            }
+
+            item.Amount = amount;
+            Console.WriteLine();
+            AddDate(item);
+        }
+
+
+        static void AddDate(BudgetItem item)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Bitte geben Sie das Datum für {item.Type} ein (Format: Tag.Monat.Jahr):");
+            Console.WriteLine();
+            string dateInput = Console.ReadLine();
+            DateTime date;
+
+            while (!DateTime.TryParseExact(dateInput, "d.M.yyyy", null, System.Globalization.DateTimeStyles.None, out date))
+            {
+                Console.WriteLine("Ungültiges Datum. Bitte geben Sie ein gültiges Datum im Format Tag.Monat.Jahr ein:");
+                dateInput = Console.ReadLine();
+            }
+
+            item.Date = date;
+            Console.WriteLine();
+            Console.WriteLine($"{item.Type} für {item.Category} mit Beschreibung '{item.Description}', Betrag '{item.Amount}' und Datum '{item.Date.ToString("d.M.yyyy")}' erfasst.");
         }
     }
 }

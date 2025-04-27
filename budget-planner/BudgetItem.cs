@@ -10,10 +10,14 @@ namespace budget_planner
 
 
     public class BudgetItem
+
     {
+        public string Type { get; set; }
         public string Category { get; set; }
-        public string Type { get; set; } // Einnahme oder Ausgabe
-        public string Description { get; set; } // Beschreibung der Kategorie
+        public string Description { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
     }
+
 
 }
