@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using budget_planner;
+using System.Text.Json;
+using System.IO;
 
 class Program
 {
@@ -71,6 +73,7 @@ class Program
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("1. Einnahmen und Ausgaben erfassen\t");
             Console.WriteLine("2. Einnahmen und Ausgaben Übersicht");
+            Console.WriteLine();
             Console.ResetColor();
         }
 
@@ -82,6 +85,7 @@ class Program
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("1. Einnahmen erfassen\t");
             Console.WriteLine("2. Ausgaben erfassen");
+            Console.WriteLine();
             Console.ResetColor();
 
             while (true)
@@ -108,12 +112,67 @@ class Program
             }
         }
 
-
         static void ZeigeEinnahmenUndAusgaben()
         {
-            Console.WriteLine("Einnahmen und Ausgaben anzeigen...");
+            Console.WriteLine();
+            Console.WriteLine("Einnahmen und Ausgaben Übersicht");
+            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.json");
+
+            if (files.Length == 0)
+            {
+                Console.WriteLine("Keine gespeicherten Daten gefunden.");
+                return;
+            }
+
+            List<BudgetItem> einnahmen = new List<BudgetItem>();
+            List<BudgetItem> ausgaben = new List<BudgetItem>();
+
+            foreach (string file in files)
+            {
+                string jsonString = File.ReadAllText(file);
+                BudgetItem item = JsonSerializer.Deserialize<BudgetItem>(jsonString);
+
+                if (item.Type == "Einnahme")
+                {
+                    einnahmen.Add(item);
+                }
+                else if (item.Type == "Ausgabe")
+                {
+                    ausgaben.Add(item);
+                }
+            }
+
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("{0,-50} {1,-50}", "Einnahmen", "Ausgaben");
+            Console.WriteLine(new string('-', 100));
+            Console.ResetColor();
+
+            int maxRows = Math.Max(einnahmen.Count, ausgaben.Count);
+            for (int i = 0; i < maxRows; i++)
+            {
+                string einnahmeText = i < einnahmen.Count ? FormatBudgetItem(einnahmen[i]) : "";
+                string ausgabeText = i < ausgaben.Count ? FormatBudgetItem(ausgaben[i]) : "";
+
+                string[] einnahmeLines = einnahmeText.Split('\n');
+                string[] ausgabeLines = ausgabeText.Split('\n');
+
+                for (int j = 0; j < Math.Max(einnahmeLines.Length, ausgabeLines.Length); j++)
+                {
+                    string einnahmeLine = j < einnahmeLines.Length ? einnahmeLines[j] : "";
+                    string ausgabeLine = j < ausgabeLines.Length ? ausgabeLines[j] : "";
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("{0,-50} {1,-50}", einnahmeLine, ausgabeLine);
+                    Console.ResetColor();
+                }
+            }
         }
 
+        static string FormatBudgetItem(BudgetItem item)
+        {
+            return $"Kategorie: {item.Category}\nBeschreibung: {item.Description}\nBetrag: {item.Amount}€\nDatum: {item.Date.ToString("d.M.yyyy")}\n{new string('-', 50)}";
+        }
 
         static void SelectCategory(int type)
         {
@@ -253,6 +312,16 @@ class Program
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{item.Type} für {item.Category} mit Beschreibung: {item.Description}, Betrag: {item.Amount}€ und Datum: {item.Date.ToString("d.M.yyyy")} erfasst.");
             Console.ResetColor();
+
+            SaveAsJson(item);
+        }
+
+
+        static void SaveAsJson(BudgetItem item)
+        {
+            string jsonString = JsonSerializer.Serialize(item);
+            string fileName = $"{item.Type}_{item.Category}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
+            File.WriteAllText(fileName, jsonString);
         }
     }
 }
