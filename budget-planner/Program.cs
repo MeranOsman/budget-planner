@@ -118,9 +118,15 @@ class Program
             Console.WriteLine("Einnahmen und Ausgaben Übersicht");
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.json");
 
-            if (files.Length == 0)
+            if (files.Length <= 2)
             {
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("Keine gespeicherten Daten gefunden.");
+                Console.ResetColor();
+                TimerAfterNoFiles();
+                Main();
                 return;
             }
 
@@ -180,6 +186,19 @@ class Program
             ShowOptions();
         }
 
+        static void TimerAfterNoFiles()
+        {
+            for (int i = 5; i > 0; i--)
+            {
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"Rückkehr zum Hauptmenü in {i} Sekunden...");
+                Console.ResetColor();
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
         static string FormatBudgetItem(BudgetItem item)
         {
             return $"Kategorie: {item.Category}\nBeschreibung: {item.Description}\nBetrag: {item.Amount}€\nDatum: {item.Date.ToString("d.M.yyyy")}\n{new string('-', 50)}";
@@ -235,17 +254,8 @@ class Program
                 {
                     File.Delete(file);
                 }
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Alle Daten wurden gelöscht.");
-                Console.ResetColor();
 
-                for (int i = 5; i > 0; i--)
-                {
-                    Console.WriteLine($"Rückkehr zum Hauptmenü in {i} Sekunden...");
-                    System.Threading.Thread.Sleep(1000);
-                    Console.Clear();
-                }
-
+                TimerAfterDeletion();
                 Main();
             }
             else if (choice == "2")
@@ -260,6 +270,23 @@ class Program
                 Console.WriteLine("Ungültige Auswahl. Bitte wählen Sie erneut.");
                 Console.ResetColor();
                 DeleteAllData();
+            }
+        }
+
+        static void TimerAfterDeletion()
+        {
+            for (int i = 5; i > 0; i--)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Alle Daten wurden gelöscht.");
+                Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"Rückkehr zum Hauptmenü in {i} Sekunden...");
+                Console.ResetColor();
+                System.Threading.Thread.Sleep(1000);
             }
         }
 
