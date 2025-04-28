@@ -12,7 +12,7 @@ class Program
         Console.InputEncoding = Encoding.UTF8;
 
         // Setzt den Titel des Konsolenfensters
-        Console.Title = "Budget-Planer - Haushaltsbuch";
+        Console.Title = "Budget-Planer: Haushaltsbuch";
 
         // Ruft die Methode auf, die die Überschrift anzeigt
         DisplayHeader();
