@@ -386,14 +386,14 @@ class Program
         static void AddDescription(BudgetItem item)
         {
             Console.WriteLine(); // Fügt eine leere Zeile ein
-            Console.WriteLine($"Bitte geben Sie eine Beschreibung für {item.Category} ein (3-10 Zeichen):"); // Fordert den Benutzer auf, eine Beschreibung einzugeben
+            Console.WriteLine($"Bitte geben Sie eine Beschreibung für {item.Category} ein (3-15 Zeichen):"); // Fordert den Benutzer auf, eine Beschreibung einzugeben
             Console.WriteLine(); // Fügt eine weitere leere Zeile ein
             Console.ForegroundColor = ConsoleColor.Blue; // Ändert die Textfarbe zu Blau
             string description = Console.ReadLine(); // Liest die Beschreibung des Benutzers
             Console.ResetColor(); // Setzt die Textfarbe zurück
 
             // Überprüft die Länge der Beschreibung und fordert den Benutzer zur erneuten Eingabe auf, falls die Länge nicht im gültigen Bereich liegt
-            while (description.Length < 3 || description.Length > 10)
+            while (description.Length < 3 || description.Length > 15)
             {
                 if (description.Length < 3)
                 {
@@ -404,7 +404,7 @@ class Program
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red; // Ändert die Textfarbe zu Rot
-                    Console.WriteLine("Beschreibung zu lang. Bitte geben Sie eine Beschreibung mit maximal 10 Zeichen ein:"); // Gibt eine Fehlermeldung aus
+                    Console.WriteLine("Beschreibung zu lang. Bitte geben Sie eine Beschreibung mit maximal 15 Zeichen ein:"); // Gibt eine Fehlermeldung aus
                     Console.ResetColor(); // Setzt die Textfarbe zurück
                 }
                 description = Console.ReadLine(); // Liest die neue Beschreibung des Benutzers
