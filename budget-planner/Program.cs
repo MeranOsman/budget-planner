@@ -31,11 +31,11 @@ class Program
             {
                 case "1":
                     DisplayHeader();
-                    ErfasseEinnahmenUndAusgaben();
+                    RecordIncomeAndExpenses();
                     break;
                 case "2":
                     DisplayHeader();
-                    ZeigeEinnahmenUndAusgaben();
+                    ShowIncomeAndExpenses();
                     break;
                 default:
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -77,7 +77,7 @@ class Program
             Console.ResetColor();
         }
 
-        static void ErfasseEinnahmenUndAusgaben()
+        static void RecordIncomeAndExpenses()
         {
             Console.WriteLine();
             Console.WriteLine("Bitte Auswahl treffen:");
@@ -112,7 +112,7 @@ class Program
             }
         }
 
-        static void ZeigeEinnahmenUndAusgaben()
+        static void ShowIncomeAndExpenses()
         {
             Console.WriteLine();
             Console.WriteLine("Einnahmen und Ausgaben Übersicht");
@@ -167,11 +167,100 @@ class Program
                     Console.ResetColor();
                 }
             }
+
+            decimal gesamtEinnahmen = einnahmen.Sum(item => item.Amount);
+            decimal gesamtAusgaben = ausgaben.Sum(item => item.Amount);
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine();
+            Console.WriteLine("{0,-50} {1,-50}", $"Gesamt: {gesamtEinnahmen}€", $"Gesamt: {gesamtAusgaben}€");
+            Console.WriteLine(new string('-', 100));
+            Console.WriteLine(new string('-', 100));
+            Console.ResetColor();
+            ShowOptions();
         }
 
         static string FormatBudgetItem(BudgetItem item)
         {
             return $"Kategorie: {item.Category}\nBeschreibung: {item.Description}\nBetrag: {item.Amount}€\nDatum: {item.Date.ToString("d.M.yyyy")}\n{new string('-', 50)}";
+        }
+
+        static void ShowOptions()
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Zwei Optionen zur Auswahl:");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("1. Hauptmenü\t\t\t2. Alle Daten löschen");
+            Console.ResetColor();
+            Console.WriteLine();
+
+            string choice;
+            do
+            {
+                choice = Console.ReadLine();
+                if (choice == "1")
+                {
+                    Main();
+                }
+                else if (choice == "2")
+                {
+                    DeleteAllData();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ungültige Auswahl!");
+                    Console.ResetColor();
+                }
+            } while (choice != "1" && choice != "2");
+        }
+
+        static void DeleteAllData()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Sind Sie sicher, dass Sie alle Daten löschen möchten?");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("1. Ja\t\t\t\t2. Nein");
+            Console.WriteLine();
+            Console.ResetColor();
+
+            string choice = Console.ReadLine();
+            if (choice == "1")
+            {
+                string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.json");
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Alle Daten wurden gelöscht.");
+                Console.ResetColor();
+
+                for (int i = 5; i > 0; i--)
+                {
+                    Console.WriteLine($"Rückkehr zum Hauptmenü in {i} Sekunden...");
+                    System.Threading.Thread.Sleep(1000);
+                    Console.Clear();
+                }
+
+                Main();
+            }
+            else if (choice == "2")
+            {
+                Console.Clear();
+                System.Threading.Thread.Sleep(500);
+                ShowIncomeAndExpenses();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Ungültige Auswahl. Bitte wählen Sie erneut.");
+                Console.ResetColor();
+                DeleteAllData();
+            }
         }
 
         static void SelectCategory(int type)
