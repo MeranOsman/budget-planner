@@ -263,27 +263,36 @@ class Program
             AddAmount(item);
         }
 
-
         static void AddAmount(BudgetItem item)
         {
             Console.WriteLine();
-            Console.WriteLine($"Bitte geben Sie den Betrag ohne '€ - Zeichen' für {item.Type} ein:");
+            Console.WriteLine($"Bitte geben Sie den Betrag ohne '€ - Zeichen' für {item.Type} ein (max 100 000):");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Blue;
             string amountInput = Console.ReadLine();
             Console.ResetColor();
             decimal amount;
 
-
-            while (!decimal.TryParse(amountInput, out amount))
+            while (!decimal.TryParse(amountInput, out amount) || amount > 100000)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Ungültiger Betrag. Bitte geben Sie eine gültige Zahl ein:");
+                if (amount > 100000)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Der Betrag darf 100.000 nicht überschreiten. Bitte geben Sie einen gültigen Betrag ein:");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ungültiger Betrag. Bitte geben Sie eine gültige Zahl ein:");
+                    Console.ResetColor();
+                }
                 Console.ResetColor();
                 amountInput = Console.ReadLine();
             }
 
-            item.Amount = amount;
+            item.Amount = Math.Round(amount, 2);
             Console.WriteLine();
             AddDate(item);
         }
@@ -314,14 +323,26 @@ class Program
             Console.ResetColor();
 
             SaveAsJson(item);
+            PromptReturnToMainMenu();
         }
-
 
         static void SaveAsJson(BudgetItem item)
         {
             string jsonString = JsonSerializer.Serialize(item);
             string fileName = $"{item.Type}_{item.Category}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
             File.WriteAllText(fileName, jsonString);
+        }
+
+        static void PromptReturnToMainMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Drücken Sie die Eingabetaste, um zum Hauptmenü zurückzukehren.");
+            Console.ResetColor();
+            Console.ReadLine();
+            Main();
         }
     }
 }
